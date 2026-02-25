@@ -185,7 +185,7 @@ function createProductCard(product) {
             <div class="product-content">
                 <div class="product-header">
                     <h3 class="product-title" title="${name}">${name}</h3>
-                    <span class="product-price">${price}</span>
+                    <span class="product-price">${price}/=</span>
                 </div>
                 <p class="product-description">${description}</p>
                 <div class="product-footer">

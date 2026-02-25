@@ -108,9 +108,7 @@ function updateStatistics(products) {
     
     products.forEach(product => {
         const category = product.context?.custom?.category || 'Uncategorized';
-        categorySet.add(category);
-        
-        const price = parseFloat(product.context?.custom?.price || 0);
+        categorySet.const price = parseFloat(product.context?.custom?.price || 0);
         if (!isNaN(price)) prices.push(price);
         
         totalSize += product.bytes || 0;

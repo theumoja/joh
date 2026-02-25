@@ -4,7 +4,7 @@ const CACHE_KEY = 'joh_products_cache';
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 const RETRY_DELAY = 5000; // 5 seconds between retries
 const MAX_RETRIES = 3;
-const DEFAULT_CATEGORY = 'accessories'; // Add this constant for default category
+const DEFAULT_CATEGORY = 'secondhand'; // Add this constant for default category
 
 // DOM Elements
 const gallery = document.getElementById('featured-products');
