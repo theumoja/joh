@@ -128,7 +128,7 @@ function updateStatistics(products) {
     if (prices.length > 0) {
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-        priceRangeElement.textContent = `${minPrice.toFixed(2)}/= - ${maxPrice.toFixed(2)}/=`;
+        priceRangeElement.textContent = `${minPrice.toFixed(0)}/= - ${maxPrice.toFixed(0)}/=`;
     } else {
         priceRangeElement.textContent = 'No prices';
     }
