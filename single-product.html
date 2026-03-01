@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOH Technologies - Product Details</title>
+  <meta name="description" content="View detailed product information and inquire via WhatsApp at JOH Technologies.">
+  <meta name="author" content="JOH Technologies">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="JOH Technologies - Product Details">
+  <meta property="og:description" content="Check out this product and order via WhatsApp.">
+  <meta property="og:type" content="website">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico">
+  
+  <!-- Stylesheet (reuse same styles) -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/functionality.css">
+  
+  <style>
+    /* Additional styles for single product page */
+    .single-product-wrapper {
+      padding: 2rem 0 4rem;
+    }
+    .single-product-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .single-product-gallery {
+      background: #f9fafb;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 24px 0 0 24px;
+    }
+    .single-product-gallery img {
+      max-width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    }
+    .single-product-details {
+      padding: 2rem 2rem 2rem 0;
+    }
+    .single-product-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+    .single-product-category {
+      display: inline-block;
+      background: #e2e8f0;
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #334155;
+      margin-bottom: 1.5rem;
+    }
+    .single-product-price {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 1.5rem;
+    }
+    .single-product-description {
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: #334155;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 2rem;
+    }
+    .product-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .product-meta-item {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 1rem;
+      border: 1px solid #e2e8f0;
+    }
+    .product-meta-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .product-meta-value {
+      font-weight: 600;
+      color: #0f172a;
+      font-size: 1rem;
+    }
+    .whatsapp-inquiry {
+      background: #25D366;
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 1rem 2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      width: 100%;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    .whatsapp-inquiry:hover {
+      background: #20bd5a;
+      transform: scale(1.02);
+      color: white;
+    }
+    .whatsapp-inquiry i {
+      font-size: 1.5rem;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .loading-single {
+      text-align: center;
+      padding: 4rem;
+    }
+    .error-container {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    }
+    .error-container i {
+      font-size: 4rem;
+      color: #ef4444;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 768px) {
+      .single-product-card {
+        grid-template-columns: 1fr;
+      }
+      .single-product-gallery {
+        border-radius: 24px 24px 0 0;
+        padding: 1.5rem;
+      }
+      .single-product-details {
+        padding: 1.5rem;
+      }
+    }
+    .share-buttons {
+      display: flex;
+      gap: 10px;
+      margin: 1.5rem 0;
+    }
+    .share-btn {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: white;
+      color: #334155;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .share-btn:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar (identical to index.html) -->
+  <header class="navbar">
+    <div class="container">
+      <nav class="navbar-inner">
+        <a href="index.html" class="navbar-brand">
+          <div class="navbar-logo">JT</div>
+          <span class="navbar-title">JOH <span>Technologies</span></span>
+        </a>
+        
+        <div class="navbar-nav">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="laptops.html" class="nav-link">Laptops</a>
+          <a href="desktops.html" class="nav-link">Desktops</a>
+          <a href="electronics.html" class="nav-link">General Electronics</a>
+          <a href="accessories.html" class="nav-link">Computer Accessories</a>
+          <a href="secndhand.html" class="nav-link">Second Hand Products</a>
+          <a href="about.html" class="nav-link">About Us</a>
+        </div>
+        
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()" aria-label="Toggle menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </nav>
+      
+      <nav id="mobile-nav" class="mobile-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="laptops.html" class="nav-link">Laptops</a>
+        <a href="desktops.html" class="nav-link">Desktops</a>
+        <a href="electronics.html" class="nav-link">General Electronics</a>
+        <a href="accessories.html" class="nav-link">Computer Accessories</a>
+        <a href="secndhand.html" class="nav-link">Second Hand Products</a>
+        <a href="about.html" class="nav-link">About Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main single product section -->
+  <section class="single-product-wrapper">
+    <div class="container">
+      <!-- Back link -->
+      <a href="javascript:history.back()" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to products
+      </a>
+      
+      <div id="single-product-container">
+        <!-- Loading state (shown initially) -->
+        <div id="loading-single" class="loading-single">
+          <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+          <p>Loading product details...</p>
+        </div>
+        
+        <!-- Error / not found state (hidden initially) -->
+        <div id="error-container" class="error-container" style="display: none;">
+          <i class="fas fa-exclamation-circle"></i>
+          <h2>Product not found</h2>
+          <p>The requested product could not be loaded.</p>
+          <a href="index.html" class="btn btn-primary" style="margin-top: 1.5rem; display: inline-block;">Browse products</a>
+        </div>
+        
+        <!-- Product card will be injected here by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer (identical to index) -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="navbar-brand">
+            <div class="navbar-logo">JT</div>
+            <span class="navbar-title" style="color: white;">JOH <span style="color: hsl(210, 80%, 60%);">Technologies</span></span>
+          </a>
+          <p>Your trusted source for premium tech products in Uganda. Quality, reliability, and excellent customer service.</p>
+        </div>
+        
+        <div>
+          <h4>Products</h4>
+          <ul class="footer-links">
+            <li><a href="laptops.html">Laptops</a></li>
+            <li><a href="desktops.html">Desktops</a></li>
+            <li><a href="accessories.html">Computer Accessories</a></li>
+            <li><a href="electronics.html">General Electronics</a></li>
+            <li><a href="secndhand.html">Second Hand Products</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4>Company</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="https://wa.me/256776576547" target="_blank">Contact/Support</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4>Contact</h4>
+          <ul class="footer-links">
+            <li><a href="https://wa.me/256776576547" target="_blank">WhatsApp</a></li>
+            <li><a href="tel:+256776576547">+256 776 576 547</a></li>
+            <li><a href="#">Western Arcade, Uganda</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2026 JOH Technologies. All rights reserved.</p>
+        <div class="footer-social">
+          <a href="https://wa.me/256776576547" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+          </a>
+          <a href="#" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // --------------------------------------------------------------
+    // Single product page logic (reuses concepts from script-index.js)
+    // --------------------------------------------------------------
+    
+    // Configuration (same as index)
+    const PRODUCTS_JSON_URL = 'https://basil87998-dot.github.io/cloudinary-gallery/public/products.json';
+    const CACHE_KEY = 'joh_products_cache';
+    
+    // Global state
+    let allProducts = [];
+    let currentProduct = null;
+
+    // Utility functions (copied/adapted)
+    function formatPrice(price) {
+      if (!price || price === '0.00') return 'Free';
+      const num = parseFloat(price);
+      if (isNaN(num)) return $`{price}`;
+      return `${num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return 'Unknown';
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+          year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+      } catch {
+        return dateString;
+      }
+    }
+
+    function formatTimeAgo(date) {
+      const now = new Date();
+      const diffMs = now - new Date(date);
+      const diffMins = Math.floor(diffMs / 60000);
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+      const diffHours = Math.floor(diffMs / 3600000);
+      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+      const diffDays = Math.floor(diffMs / 86400000);
+      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+      return formatDate(date);
+    }
+
+    // Get product ID from URL (e.g., ?id=public_id123)
+    function getProductIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    // Load from cache (simplified)
+    function loadFromCache() {
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (!cached) return null;
+        const cache = JSON.parse(cached);
+        const now = new Date().getTime();
+        // Use cache even if older; we'll fallback if product missing
+        if (now - cache.timestamp < 60 * 60 * 1000 * 24) { // 24h validity for single product
+          return cache.data;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    // Fetch products and then find the one matching ID
+    async function loadSingleProduct() {
+      const productId = getProductIdFromUrl();
+      if (!productId) {
+        showError('No product ID specified');
+        return;
+      }
+
+      const loadingEl = document.getElementById('loading-single');
+      const errorEl = document.getElementById('error-container');
+      const container = document.getElementById('single-product-container');
+
+      try {
+        // Try cache first
+        let data = loadFromCache();
+        if (data && data.resources) {
+          allProducts = data.resources;
+          findAndRenderProduct(productId);
+          // still fetch fresh in background
+          fetchFreshProductData(productId);
+          return;
+        }
+
+        // Fetch fresh
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const res = await fetch(`${PRODUCTS_JSON_URL}?v=${Date.now()}`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        data = await res.json();
+        if (!data.resources || !Array.isArray(data.resources)) throw new Error('Invalid format');
+
+        allProducts = data.resources;
+        // Optionally cache it
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: { resources: allProducts, loadTime: new Date().toISOString() } }));
+        } catch (e) {}
+
+        findAndRenderProduct(productId);
+      } catch (error) {
+        console.error('Failed to load product:', error);
+        // Try cache even if expired
+        const cached = loadFromCache(); // re-attempt with relaxed expiry
+        if (cached && cached.resources) {
+          allProducts = cached.resources;
+          findAndRenderProduct(productId);
+        } else {
+          showError('Could not load product data');
+        }
+      } finally {
+        loadingEl.style.display = 'none';
+      }
+    }
+
+    function findAndRenderProduct(productId) {
+      const product = allProducts.find(p => p.public_id === productId || p.filename === productId || p.asset_id === productId);
+      if (!product) {
+        showError('Product not found');
+        return;
+      }
+      currentProduct = product;
+      renderSingleProduct(product);
+    }
+
+    async function fetchFreshProductData(productId) {
+      try {
+        const res = await fetch(`${PRODUCTS_JSON_URL}?v=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.resources) {
+            allProducts = data.resources;
+            const updated = allProducts.find(p => p.public_id === productId || p.filename === productId);
+            if (updated) {
+              currentProduct = updated;
+              renderSingleProduct(updated);
+              // Update cache
+              localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data: { resources: allProducts, loadTime: new Date().toISOString() } }));
+            }
+          }
+        }
+      } catch (e) {
+        // silent fail
+      }
+    }
+
+    function renderSingleProduct(product) {
+      const container = document.getElementById('single-product-container');
+      const loadingEl = document.getElementById('loading-single');
+      const errorEl = document.getElementById('error-container');
+      
+      loadingEl.style.display = 'none';
+      errorEl.style.display = 'none';
+
+      const WHATSAPP_NUMBER = '256776576547'; // Your WhatsApp number
+      const context = product.context || {};
+      const name = context.name || 'Unnamed Product';
+      const price = formatPrice(context.price);
+      const description = context.description || 'No description available';
+      const category = context.category || 'Uncategorized';
+    
+      // Format dates
+      const createdDate = formatDate(product.created_at);
+      const timeAgo = formatTimeAgo(product.created_at);
+    
+      // Image URL
+      const imageUrl = product.secure_url || product.url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80';
+    
+    
+      // Use public_id or asset_id as unique identifier for the product link
+      const productId = product.public_id || product.asset_id || product.filename;
+      const productPageUrl = `single-product.html?id=${encodeURIComponent(productId)}`;
+    
+      // WhatsApp inquiry URL (direct inquiry without going to single product)
+      const whatsappMessage = `I'm interested in *${name}* (${category}) - ${window.location.origin}/single-product.html?id=${encodeURIComponent(productId)}`;
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
+
+      // Build shareable product link
+      const productUrl = window.location.href;
+
+      const html = `
+        <div class="single-product-card">
+          <div class="single-product-gallery">
+            <img src="${imageUrl}" alt="${name}" onerror="this.src='https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80'">
+          </div>
+          <div class="single-product-details">
+            <h1 class="single-product-title">${name}</h1>
+            <span class="single-product-category"><i class="fas fa-tag" style="margin-right: 6px;"></i>${category}</span>
+            <div class="single-product-price">${price}/=</div>
+            <div class="single-product-description">${description}</div>
+            
+            
+
+            <!-- Share buttons -->
+            <div class="share-buttons">
+              <button class="share-btn" onclick="copyLink('${productUrl}')">
+                <i class="fas fa-link"></i> Copy link
+              </button>
+              <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}" target="_blank" class="share-btn">
+                <i class="fab fa-facebook"></i> Share
+              </a>
+            </div>
+
+            <!-- WhatsApp inquiry button (primary) -->
+            <a href="${whatsappUrl}" target="_blank" class="whatsapp-inquiry">
+              <i class="fab fa-whatsapp"></i> Inquire on WhatsApp
+            </a>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: #64748b; text-align: center;">
+              Click above to ask about this product or place an order.
+            </p>
+          </div>
+        </div>
+      `;
+
+      
+      container.innerHTML = html;
+    }
+
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function showError(msg) {
+      document.getElementById('loading-single').style.display = 'none';
+      document.getElementById('error-container').style.display = 'block';
+      // optionally update message
+    }
+
+    // Share / copy functions
+    window.copyLink = function(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Product link copied to clipboard!');
+      }).catch(() => {
+        prompt('Copy this link manually:', url);
+      });
+    };
+
+    // Mobile nav toggle (copied from index)
+    window.toggleMobileNav = function() {
+      const mobileNav = document.getElementById('mobile-nav');
+      if (mobileNav) mobileNav.classList.toggle('active');
+    };
+
+    // Initialize when DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSingleProduct();
+    });
+  </script>
+</body>
+</html>
