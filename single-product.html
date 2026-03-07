@@ -7,10 +7,12 @@
   <meta name="description" content="View detailed product information and inquire via WhatsApp at JOH Technologies.">
   <meta name="author" content="JOH Technologies">
   
-  <!-- Open Graph -->
+  <!-- Open Graph (initial generic values; will be updated by JS) -->
   <meta property="og:title" content="JOH Technologies - Product Details">
   <meta property="og:description" content="Check out this product and order via WhatsApp.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80"> <!-- fallback image -->
+  <meta property="og:url" content="https://basil87998-dot.github.io/cloudinary-gallery/single-product.html">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -356,7 +358,7 @@
     function formatPrice(price) {
       if (!price || price === '0.00') return 'Free';
       const num = parseFloat(price);
-      if (isNaN(num)) return $`{price}`;
+      if (isNaN(num)) return `${price}`;  // fixed template literal bug
       return `${num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
     }
 
@@ -492,6 +494,73 @@
       }
     }
 
+    // --- New function to update meta tags for shareability ---
+    function updateMetaTags(product) {
+      const context = product.context || {};
+      const name = context.name || 'Unnamed Product';
+      const description = context.description || 'Check out this product at JOH Technologies';
+      const imageUrl = product.secure_url || product.url || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=80';
+      const productUrl = window.location.href;
+
+      // Update title
+      document.title = `${name} - JOH Technologies`;
+
+      // Helper to set or create meta tag
+      function setMetaTag(property, content, isOg = true) {
+        const selector = isOg ? `meta[property="og:${property}"]` : `meta[name="${property}"]`;
+        let tag = document.querySelector(selector);
+        if (!tag) {
+          tag = document.createElement('meta');
+          if (isOg) {
+            tag.setAttribute('property', `og:${property}`);
+          } else {
+            tag.setAttribute('name', property);
+          }
+          document.head.appendChild(tag);
+        }
+        tag.setAttribute('content', content);
+      }
+
+      // Update basic meta
+      setMetaTag('description', description, false);
+      
+      // Update Open Graph tags
+      setMetaTag('title', name, true);
+      setMetaTag('description', description, true);
+      setMetaTag('image', imageUrl, true);
+      setMetaTag('url', productUrl, true);
+      
+      // Also update Twitter card (optional but good)
+      setMetaTag('twitter:card', 'summary_large_image', false);
+      setMetaTag('twitter:title', name, false);
+      setMetaTag('twitter:description', description, false);
+      setMetaTag('twitter:image', imageUrl, false);
+      
+      // Add/update JSON-LD structured data for product
+      let script = document.querySelector('script[type="application/ld+json"]');
+      if (!script) {
+        script = document.createElement('script');
+        script.setAttribute('type', 'application/ld+json');
+        document.head.appendChild(script);
+      }
+      const price = context.price ? parseFloat(context.price) : 0;
+      const structuredData = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": name,
+        "description": description,
+        "image": imageUrl,
+        "offers": {
+          "@type": "Offer",
+          "price": price || 0,
+          "priceCurrency": "UGX",
+          "availability": "https://schema.org/InStock",
+          "url": productUrl
+        }
+      };
+      script.textContent = JSON.stringify(structuredData);
+    }
+
     function renderSingleProduct(product) {
       const container = document.getElementById('single-product-container');
       const loadingEl = document.getElementById('loading-single');
@@ -525,6 +594,9 @@
 
       // Build shareable product link
       const productUrl = window.location.href;
+
+      // --- Update meta tags for shareability ---
+      updateMetaTags(product);
 
       const html = `
         <div class="single-product-card">
